@@ -50,4 +50,4 @@ jobs:
     - name: Deploy to AKS
       run: |
         sed -i "s/#IMAGE_TAG#/${{ github.sha }}/" k8s/application.yml
-        kubectl apply -f k8s/application.yml
+        kubectl apply -f k8s/application.yml -n $NAMESPACE

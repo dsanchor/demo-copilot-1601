@@ -89,3 +89,9 @@ export SVC_IP=$(kubectl get svc demo1601 -n $NAMESPACE -o jsonpath='{.status.loa
 ```bash
 curl http://$SVC_IP:8080/reverse?input=hello
 ```
+
+### Test operación hello
+
+```bash
+curl http://$SVC_IP:8080/hello
+```
