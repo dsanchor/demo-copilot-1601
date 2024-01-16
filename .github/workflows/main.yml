@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+env:
+  AKS_RESOURCE_GROUP: aks-demo-alb-rg
+  AKS_CLUSTER: demo
+  NAMESPACE: demo1601
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,4 +37,17 @@ jobs:
       with:
         context: .
         push: true
-        tags: ghcr.io/${{ github.repository }}/demo1601:latest
+        tags: ghcr.io/${{ github.repository }}/demo1601:${{ github.sha }}
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Configure AKS credentials
+      run: az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTER
+
+    - name: Deploy to AKS
+      run: |
+        sed -i "s/#IMAGE_TAG#/${{ github.sha }}/" k8s/application.yml
+        kubectl apply -f k8s/application.yml
